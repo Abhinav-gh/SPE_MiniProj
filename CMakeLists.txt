@@ -1,0 +1,50 @@
+cmake_minimum_required(VERSION 3.14)
+project(Calculator VERSION 1.0.0 LANGUAGES CXX)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Add include directory
+include_directories(include)
+
+# Create library for calculator functions
+add_library(calculator_lib 
+    src/calculator.cpp
+)
+
+target_include_directories(calculator_lib PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+)
+
+# Create main executable
+add_executable(calculator_app
+    src/main.cpp
+)
+
+target_link_libraries(calculator_app calculator_lib)
+
+# Enable testing
+enable_testing()
+
+# Include Google Test
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  GIT_REPOSITORY https://github.com/google/googletest.git
+  GIT_TAG        release-1.12.1
+)
+
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+FetchContent_MakeAvailable(googletest)
+
+# Add tests subdirectory
+add_subdirectory(tests)
+
+# Create a custom target to run tests
+add_custom_target(run_tests
+    COMMAND ${CMAKE_CTEST_COMMAND} --verbose
+    DEPENDS calculator_tests
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)

@@ -3,6 +3,8 @@
 #ifndef CALCULATOR_H
 #define CALCULATOR_H
 
+#include <stdexcept>
+
 // Displays the user menu
 void showMenu();
 
@@ -18,4 +20,10 @@ void performNaturalLog();
 // Performs power operation: x^b
 void performPower();
 
-#endif //CALCULATOR_H
+// Testable calculator functions (for unit testing)
+double calculateSquareRoot(double num);
+long long calculateFactorial(int num);
+double calculateNaturalLog(double num);
+double calculatePower(double base, double exponent);
+
+#endif // CALCULATOR_H
