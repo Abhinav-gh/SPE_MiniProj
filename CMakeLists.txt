@@ -24,27 +24,16 @@ add_executable(calculator_app
 
 target_link_libraries(calculator_app calculator_lib)
 
-# Enable testing
-enable_testing()
-
-# Include Google Test
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        release-1.12.1
+# Create test harness executable
+add_executable(calculator_test_harness
+    tests/test_harness.cpp
 )
 
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
-# Add tests subdirectory
-add_subdirectory(tests)
+target_link_libraries(calculator_test_harness calculator_lib)
 
 # Create a custom target to run tests
 add_custom_target(run_tests
-    COMMAND ${CMAKE_CTEST_COMMAND} --verbose
-    DEPENDS calculator_tests
+    COMMAND ./calculator_test_harness
+    DEPENDS calculator_test_harness
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
 )

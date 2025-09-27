@@ -4,7 +4,7 @@ cmake-build-*/
 
 # Executables
 calculator_app
-calculator_tests
+calculator_test_harness
 *.exe
 *.out
 *.app

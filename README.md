@@ -1,17 +1,18 @@
 # Scientific Calculator
 
-A C++ scientific calculator with comprehensive unit testing using Google Test and CMake build system.
+A C++ scientific calculator with simple assert-based unit testing and CMake build system.
 
 ## Features
 
+- Basic arithmetic operations (add, subtract, multiply, divide)
 - Square Root calculation
 - Factorial calculation
 - Natural Logarithm calculation
 - Power function calculation
 - Input validation and error handling
-- Comprehensive unit tests
+- Simple assert-based unit tests (no external dependencies)
 
-## Current project Structure
+## Current Project Structure
 
 ```
 Calculator/
@@ -25,8 +26,7 @@ Calculator/
 │   ├── calculator.cpp      # Calculator implementations
 │   └── main.cpp           # Main application entry point
 └── tests/                  # Unit tests
-    ├── CMakeLists.txt      # Test CMake configuration
-    └── test_calculator.cpp # Google Test unit tests
+    └── test_harness.cpp    # Assert-based unit tests
 ```
 
 ## Building the Project
@@ -68,25 +68,20 @@ Run all unit tests:
 make run_tests
 ```
 
-Or run tests with CTest:
+Or run the test harness directly:
 ```bash
-ctest --verbose
-```
-
-Or run the test executable directly:
-```bash
-./calculator_tests
+./calculator_test_harness
 ```
 
 ## Testing
 
-The project includes comprehensive unit tests covering:
+The project includes simple assert-based unit tests covering:
 
-- **Square Root Tests**: Positive numbers, zero, decimals, negative inputs (error cases)
-- **Factorial Tests**: Small numbers, large numbers, negative inputs, overflow cases
-- **Natural Logarithm Tests**: Positive numbers, decimals, zero/negative inputs (error cases)
-- **Power Function Tests**: Various base/exponent combinations, special cases, edge cases
-- **Performance Tests**: Ensuring reasonable execution time for operations
+- **Basic Arithmetic Tests**: Addition, subtraction, multiplication, division (including edge cases)
+- **Square Root Tests**: Positive numbers, zero, negative inputs (error cases)
+- **Factorial Tests**: Small numbers, negative inputs (error cases)
+- **Natural Logarithm Tests**: Positive numbers, zero/negative inputs (error cases)
+- **Power Function Tests**: Various base/exponent combinations, special cases
 - **Edge Cases**: Boundary conditions and error handling
 
 ### Test Coverage
@@ -95,13 +90,12 @@ The project includes comprehensive unit tests covering:
 - Negative test cases for invalid inputs
 - Edge cases and boundary conditions
 - Error handling verification using exceptions
-- Performance validation
 
 ## CMake Targets
 
 - `calculator_app`: Main calculator application
 - `calculator_lib`: Calculator function library
-- `calculator_tests`: Unit test executable
+- `calculator_test_harness`: Simple assert-based unit test executable
 - `run_tests`: Custom target to run all tests
 
 ## Error Handling

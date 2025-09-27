@@ -20,7 +20,13 @@ void performNaturalLog();
 // Performs power operation: x^b
 void performPower();
 
-// Testable calculator functions (for unit testing)
+// Basic arithmetic operations
+double add(double a, double b);
+double subtract(double a, double b);
+double multiply(double a, double b);
+double divide(double a, double b);
+
+// Advanced calculator functions (for unit testing)
 double calculateSquareRoot(double num);
 long long calculateFactorial(int num);
 double calculateNaturalLog(double num);
