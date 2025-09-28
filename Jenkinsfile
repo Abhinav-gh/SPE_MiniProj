@@ -110,7 +110,7 @@
                 steps {
                     echo 'Pushing Docker image to Docker Hub...'
                     script {
-                        docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+                        docker.withRegistry('https://index.docker.io/v1/', 'Abhinav_Docker') {
                             def dockerImage = docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
                             dockerImage.push()
                             dockerImage.push('latest')
