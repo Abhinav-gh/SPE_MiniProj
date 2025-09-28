@@ -20,8 +20,8 @@
                     echo 'Installing build dependencies...'
                     sh '''
                         # Update and install required packages
-                        apt-get update
-                        apt-get install -y cmake build-essential
+                        sudo apt-get update
+                        sudo apt-get install -y cmake build-essential
                     '''
                 }
             }
