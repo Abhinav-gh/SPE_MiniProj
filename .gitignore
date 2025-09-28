@@ -34,6 +34,21 @@ Testing/
 _deps/
 *.cmake
 
+# Docker
+.dockerignore
+docker-compose.override.yml
+.docker/
+
+# Ansible
+ansible/*.retry
+ansible/group_vars/
+ansible/host_vars/
+*.vault
+
+# Jenkins
+.jenkins/
+jenkins_home/
+
 # IDE files
 .vscode/
 .idea/
@@ -64,6 +79,7 @@ Desktop.ini
 *.bak
 *.log
 *~
+logs/
 
 # Package files
 *.tar.gz
@@ -77,4 +93,15 @@ Desktop.ini
 *.gcno
 coverage.info
 coverage/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Secrets (never commit these!)
+secrets/
+*.pem
+*.key
+credentials.yml
 
