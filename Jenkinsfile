@@ -86,38 +86,38 @@
                 }
             }
             
-            // stage('Build Docker Image') {
-            //     steps {
-            //         echo 'Building Docker image...'
-            //         script {
-            //             def dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
-            //             env.DOCKER_IMAGE_ID = dockerImage.id
-            //         }
-            //     }
-            // }
+            stage('Build Docker Image') {
+                steps {
+                    echo 'Building Docker image...'
+                    script {
+                        def dockerImage = docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
+                        env.DOCKER_IMAGE_ID = dockerImage.id
+                    }
+                }
+            }
             
-            // stage('Test Docker Image') {
-            //     steps {
-            //         echo 'Testing Docker image...'
-            //         sh '''
-            //             # Run container to test it works
-            //             docker run --rm ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ./calculator_test_harness
-            //         '''
-            //     }
-            // }
+            stage('Test Docker Image') {
+                steps {
+                    echo 'Testing Docker image...'
+                    sh '''
+                        # Run container to test it works
+                        docker run --rm ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ./calculator_test_harness
+                    '''
+                }
+            }
             
-            // stage('Push to Docker Hub') {
-            //     steps {
-            //         echo 'Pushing Docker image to Docker Hub...'
-            //         script {
-            //             docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-            //                 def dockerImage = docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
-            //                 dockerImage.push()
-            //                 dockerImage.push('latest')
-            //             }
-            //         }
-            //     }
-            // }
+            stage('Push to Docker Hub') {
+                steps {
+                    echo 'Pushing Docker image to Docker Hub...'
+                    script {
+                        docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
+                            def dockerImage = docker.image("${DOCKER_IMAGE_NAME}:${DOCKER_TAG}")
+                            dockerImage.push()
+                            dockerImage.push('latest')
+                        }
+                    }
+                }
+            }
             
             // stage('Deploy with Ansible') {
             //     steps {
