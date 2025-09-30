@@ -1,15 +1,16 @@
-# Multi-stage build 
-# Stage 1: Build stage
-FROM ubuntu:22.04 AS builder
+# Multi-stage build for minimal static binary
+# Stage 1: Build stage with Alpine
+FROM alpine:3.18 AS builder
 
-ENV DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install -y \
-    build-essential \
+# Install build dependencies
+RUN apk add --no-cache \
+    build-base \
     cmake \
-    g++ \
     make \
-    && rm -rf /var/lib/apt/lists/*
+    gcc \
+    g++ \
+    musl-dev \
+    linux-headers
 
 WORKDIR /app
 
@@ -18,23 +19,18 @@ COPY include/ ./include/
 COPY src/ ./src/
 COPY tests/ ./tests/
 
+# Build with static linking
 RUN mkdir -p build && \
     cd build && \
-    cmake -DCMAKE_BUILD_TYPE=Release .. && \
-    make -j$(nproc)
+    cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_EXE_LINKER_FLAGS="-static" .. && \
+    make -j$(nproc) && \
+    strip calculator_app calculator_test_harness
 
-# Stage 2: Runtime stage
-FROM ubuntu:22.04
+# Stage 2: Minimal runtime stage
+FROM scratch
 
-ENV DEBIAN_FRONTEND=noninteractive
+# Copy only the static executables
+COPY --from=builder /app/build/calculator_app /calculator_app
 
-RUN apt-get update && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean
-
-WORKDIR /app
-
-COPY --from=builder /app/build/calculator_app ./
-COPY --from=builder /app/build/calculator_test_harness ./
-
-CMD ["./calculator_test_harness"]
+# Default command
+ENTRYPOINT ["/calculator_app"]
