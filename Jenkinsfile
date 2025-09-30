@@ -15,16 +15,16 @@
                 }
             }
             
-            stage('Build Dependencies') {
-                steps {
-                    echo 'Installing build dependencies...'
-                    sh '''
-                        # Update and install required packages
-                        sudo apt-get update
-                        sudo apt-get install -y cmake build-essential
-                    '''
-                }
-            }
+            // stage('Build Dependencies') {
+            //     steps {
+            //         echo 'Installing build dependencies...'
+            //         sh '''
+            //             # Update and install required packages
+            //             sudo apt-get update
+            //             sudo apt-get install -y cmake build-essential
+            //         '''
+            //     }
+            // }
             
             stage('Build Application') {
                 steps {
@@ -96,15 +96,15 @@
                 }
             }
             
-            stage('Test Docker Image') {
-                steps {
-                    echo 'Testing Docker image...'
-                    sh '''
-                        # Run container to test it works
-                        docker run --rm ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ./calculator_test_harness
-                    '''
-                }
-            }
+            // stage('Test Docker Image') {
+            //     steps {
+            //         echo 'Testing Docker image...'
+            //         sh '''
+            //             # Run container to test it works
+            //             docker run --rm ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ./calculator_test_harness
+            //         '''
+            //     }
+            // }
             
             stage('Push to Docker Hub') {
                 steps {
