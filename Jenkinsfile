@@ -118,11 +118,78 @@
             }
             success {
                 echo 'Pipeline executed successfully!'
-                // Send success notification
+                emailext (
+                    subject: "SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                    body: """
+                    <h2>🎉 Build Successful!</h2>
+                    <p><strong>Project:</strong> ${env.JOB_NAME}</p>
+                    <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
+                    <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    <p><strong>Git Commit:</strong> ${env.GIT_COMMIT}</p>
+                    <p><strong>Duration:</strong> ${currentBuild.durationString}</p>
+                    
+                    <h3>All Stages Completed:</h3>
+                    <ul>
+                        <li>Code Checkout</li>
+                        <li> Application Build</li>
+                        <li> Test harness </li>
+                        <li> Code Quality Check</li>
+                        <li> Docker Image Build</li>
+                        <li> Docker Hub Push</li>
+                        <li> Ansible Deployment</li>
+                    </ul>
+                    
+                    <p><strong>Docker Image:</strong> ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}</p>
+                    <p>🚀 Application deployed successfully!</p>
+                    """,
+                    mimeType: 'text/html',
+                    to: "your-actual-email@gmail.com"
+                )
             }
             failure {
                 echo 'Pipeline failed!'
-                // Send failure notification
+                emailext (
+                    subject: "❌ FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                    body: """
+                    <h2>💥 Build Failed!</h2>
+                    <p><strong>Project:</strong> ${env.JOB_NAME}</p>
+                    <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
+                    <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    <p><strong>Console Output:</strong> <a href="${env.BUILD_URL}/console">${env.BUILD_URL}/console</a></p>
+                    <p><strong>Git Commit:</strong> ${env.GIT_COMMIT}</p>
+                    <p><strong>Duration:</strong> ${currentBuild.durationString}</p>
+                    
+                    <h3>❌ Failed Stage:</h3>
+                    <p><strong>Stage:</strong> ${env.STAGE_NAME}</p>
+                    
+                    <h3>🔍 Failure Details:</h3>
+                    <pre style="background-color: #f5f5f5; padding: 10px; border-radius: 5px;">
+                    ${currentBuild.description ?: 'Check console output for detailed error information'}
+                    </pre>
+                    
+                    <p>⚠️ Please check the console output and fix the issues.</p>
+                    """,
+                    mimeType: 'text/html',
+                    to: "your-actual-email@gmail.com"
+                )
+            }
+            unstable {
+                echo 'Pipeline unstable!'
+                emailext (
+                    subject: "⚠️ UNSTABLE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                    body: """
+                    <h2>⚠️ Build Unstable!</h2>
+                    <p><strong>Project:</strong> ${env.JOB_NAME}</p>
+                    <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
+                    <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
+                    <p><strong>Test Results:</strong> <a href="${env.BUILD_URL}/testReport">${env.BUILD_URL}/testReport</a></p>
+                    
+                    <p>🧪 Some tests may have failed or warnings were generated.</p>
+                    <p>Please review the test results and console output.</p>
+                    """,
+                    mimeType: 'text/html',
+                    to: "your-actual-email@gmail.com"
+                )
             }
             cleanup {
                 // Clean workspace

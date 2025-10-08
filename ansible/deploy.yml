@@ -1,23 +1,12 @@
 ---
 - name: Calculator App deployment
   hosts: local
-  become: false
   vars:
     img_name: "darklordrises/spe_miniproj"
     img_tag: "latest"
     calculator_container: "calculator_app"
-    container_port: "8080"
-    host_port: "8080"
-  
-  pre_tasks:
-    - name: Ensure Docker is running
-      systemd:
-        name: docker
-        state: started
-      become: yes
-      
   tasks:
-    - name: Remove existing container
+    - name: Remove a container if exists
       community.docker.docker_container:
         name: "{{ calculator_container }}"
         state: absent
@@ -28,55 +17,12 @@
         name: "{{ img_name }}"
         tag: "{{ img_tag }}"
         source: pull
-        force_source: yes
     
     - name: Run the container
       community.docker.docker_container:
         name: "{{ calculator_container }}"
         image: "{{ img_name }}:{{ img_tag }}"
         state: started
-        restart_policy: unless-stopped
+        restart_policy: no
         detach: true
-        ports:
-          - "{{ host_port }}:{{ container_port }}"
-        healthcheck:
-          test: ["CMD-SHELL", "pgrep -f calculator_app || exit 1"]
-          interval: 30s
-          timeout: 10s
-          retries: 3
-        labels:
-          app: "scientific-calculator"
-          environment: "production"
-          version: "{{ img_tag }}"
-    
-    - name: Wait for container to be ready
-      wait_for:
-        port: "{{ host_port }}"
-        host: "localhost"
-        delay: 5
-        timeout: 30
-      ignore_errors: yes
-    
-    - name: Verify container is running
-      community.docker.docker_container_info:
-        name: "{{ calculator_container }}"
-      register: container_info
-    
-    - name: Display deployment status
-      debug:
-        msg: |
-          Deployment Status: {{ container_info.container.State.Status }}
-          Container ID: {{ container_info.container.Id[:12] }}
-          Image: {{ container_info.container.Config.Image }}
-          Started: {{ container_info.container.State.StartedAt }}
-    
-    - name: Test application functionality
-      community.docker.docker_container_exec:
-        container: "{{ calculator_container }}"
-        command: "/calculator_test_harness"
-      register: test_results
-      ignore_errors: yes
-    
-    - name: Display test results
-      debug:
-        msg: "Application tests: {{ 'PASSED' if test_results.rc == 0 else 'FAILED' }}"
+        
