@@ -113,42 +113,48 @@ pipeline {
             }
             success {
                 echo 'Pipeline executed successfully!'
-                try {
-                    echo "Sending success email to: ${env.NOTIFICATION_EMAIL}"
-                    emailext (
-                        subject: "✅ SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: getEmailTemplate('success'),
-                        mimeType: 'text/html',
-                        to: "${env.NOTIFICATION_EMAIL}"
-                    )
-                    echo "Success email sent successfully"
-                } catch (Exception e) {
-                    echo "Failed to send success email: ${e.getMessage()}"
+                script {
+                    try {
+                        echo "Sending success email to: ${env.NOTIFICATION_EMAIL}"
+                        emailext (
+                            subject: "✅ SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                            body: getEmailTemplate('success'),
+                            mimeType: 'text/html',
+                            to: "${env.NOTIFICATION_EMAIL}"
+                        )
+                        echo "Success email sent successfully"
+                    } catch (Exception e) {
+                        echo "Failed to send success email: ${e.getMessage()}"
+                    }
                 }
             }
             failure {
                 echo 'Pipeline failed!'
-                try {
-                    echo "Sending failure email to: ${env.NOTIFICATION_EMAIL}"
-                    emailext (
-                        subject: "❌ FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                        body: "<h2>Build Failed!</h2><p>Project: ${env.JOB_NAME}</p><p>Build: #${env.BUILD_NUMBER}</p><p><a href='${env.BUILD_URL}'>View Details</a></p>",
-                        mimeType: 'text/html',
-                        to: "${env.NOTIFICATION_EMAIL}"
-                    )
-                    echo "Failure email sent successfully"
-                } catch (Exception e) {
-                    echo "Failed to send failure email: ${e.getMessage()}"
+                script {
+                    try {
+                        echo "Sending failure email to: ${env.NOTIFICATION_EMAIL}"
+                        emailext (
+                            subject: "❌ FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                            body: "<h2>Build Failed!</h2><p>Project: ${env.JOB_NAME}</p><p>Build: #${env.BUILD_NUMBER}</p><p><a href='${env.BUILD_URL}'>View Details</a></p>",
+                            mimeType: 'text/html',
+                            to: "${env.NOTIFICATION_EMAIL}"
+                        )
+                        echo "Failure email sent successfully"
+                    } catch (Exception e) {
+                        echo "Failed to send failure email: ${e.getMessage()}"
+                    }
                 }
             }
             unstable {
                 echo 'Pipeline unstable!'
-                emailext (
-                    subject: "⚠️ UNSTABLE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                    body: getEmailTemplate('unstable'),
-                    mimeType: 'text/html',
-                    to: "${env.NOTIFICATION_EMAIL}"
-                )
+                script {
+                    emailext (
+                        subject: "⚠️ UNSTABLE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: getEmailTemplate('unstable'),
+                        mimeType: 'text/html',
+                        to: "${env.NOTIFICATION_EMAIL}"
+                    )
+                }
             }
             cleanup {
                 // Clean workspace
