@@ -1,12 +1,20 @@
 def getEmailTemplate(templateName) {
-    def template = readFile("jenkins/email-templates/${templateName}.html")
-    
-    // Replace only essential variables
-    template = template.replace('${JOB_NAME}', env.JOB_NAME)
-    template = template.replace('${BUILD_NUMBER}', env.BUILD_NUMBER)
-    template = template.replace('${BUILD_URL}', env.BUILD_URL)
-    
-    return template
+    try {
+        echo "Loading template: jenkins/email-templates/${templateName}.html"
+        def template = readFile("jenkins/email-templates/${templateName}.html")
+        echo "Template loaded successfully, length: ${template.length()}"
+        
+        // Replace only essential variables
+        template = template.replace('${JOB_NAME}', env.JOB_NAME)
+        template = template.replace('${BUILD_NUMBER}', env.BUILD_NUMBER)
+        template = template.replace('${BUILD_URL}', env.BUILD_URL)
+        
+        echo "Template processing completed"
+        return template
+    } catch (Exception e) {
+        echo "Error loading template: ${e.getMessage()}"
+        return "<h2>Build ${templateName.toUpperCase()}</h2><p>Project: ${env.JOB_NAME}</p><p>Build: #${env.BUILD_NUMBER}</p><p><a href='${env.BUILD_URL}'>View Details</a></p>"
+    }
 }
 
 pipeline {
@@ -105,21 +113,33 @@ pipeline {
             }
             success {
                 echo 'Pipeline executed successfully!'
-                emailext (
-                    subject: "✅ SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                    body: getEmailTemplate('success'),
-                    mimeType: 'text/html',
-                    to: "${env.NOTIFICATION_EMAIL}"
-                )
+                try {
+                    echo "Sending success email to: ${env.NOTIFICATION_EMAIL}"
+                    emailext (
+                        subject: "✅ SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: getEmailTemplate('success'),
+                        mimeType: 'text/html',
+                        to: "${env.NOTIFICATION_EMAIL}"
+                    )
+                    echo "Success email sent successfully"
+                } catch (Exception e) {
+                    echo "Failed to send success email: ${e.getMessage()}"
+                }
             }
             failure {
                 echo 'Pipeline failed!'
-                emailext (
-                    subject: "❌ FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                    body: getEmailTemplate('failure'),
-                    mimeType: 'text/html',
-                    to: "${env.NOTIFICATION_EMAIL}"
-                )
+                try {
+                    echo "Sending failure email to: ${env.NOTIFICATION_EMAIL}"
+                    emailext (
+                        subject: "❌ FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                        body: "<h2>Build Failed!</h2><p>Project: ${env.JOB_NAME}</p><p>Build: #${env.BUILD_NUMBER}</p><p><a href='${env.BUILD_URL}'>View Details</a></p>",
+                        mimeType: 'text/html',
+                        to: "${env.NOTIFICATION_EMAIL}"
+                    )
+                    echo "Failure email sent successfully"
+                } catch (Exception e) {
+                    echo "Failed to send failure email: ${e.getMessage()}"
+                }
             }
             unstable {
                 echo 'Pipeline unstable!'
