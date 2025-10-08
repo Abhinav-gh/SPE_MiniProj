@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .failure {
+            color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 class="failure">💥 Build Failed!</h2>
+
+    <p><strong>Project:</strong> ${JOB_NAME}</p>
+    <p><strong>Build:</strong> #${BUILD_NUMBER}</p>
+    <p><strong>Status:</strong> ❌ FAILED</p>
+
+    <p>⚠️ Please check the build and fix the issues.</p>
+
+    <p><a href="${BUILD_URL}">View Build Details</a></p>
+    <p><a href="${BUILD_URL}/console">View Console Output</a></p>
+</body>
+
+</html>

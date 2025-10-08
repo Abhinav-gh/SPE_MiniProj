@@ -1,4 +1,15 @@
-    pipeline {
+def getEmailTemplate(templateName) {
+    def template = readFile("jenkins/email-templates/${templateName}.html")
+    
+    // Replace only essential variables
+    template = template.replace('${JOB_NAME}', env.JOB_NAME)
+    template = template.replace('${BUILD_NUMBER}', env.BUILD_NUMBER)
+    template = template.replace('${BUILD_URL}', env.BUILD_URL)
+    
+    return template
+}
+
+pipeline {
         agent any
         
         environment {
@@ -22,14 +33,8 @@
                     sh '''
                         mkdir -p build
                         cd build
-                        
-                        # Configure with CMake
                         cmake ..
-                        
-                        # Build
                         make -j$(nproc)
-                        
-                        # Verify executables are created
                         ls -la calculator_app calculator_test_harness
                     '''
                 }
@@ -40,12 +45,8 @@
                     echo 'Running unit tests...'
                     sh '''
                         cd build
-                        
-                        # Run the test harness
                         ./calculator_test_harness
-                        
-                        # Run custom test target
-                        make run_tests
+                        make run_tests  
                     '''
                 }
                 post {
@@ -59,20 +60,6 @@
                         echo 'Tests failed!'
                         error 'Test execution failed'
                     }
-                }
-            }
-            
-            stage('Code Quality Check') {
-                steps {
-                    echo 'Running code quality checks...'
-                    sh '''
-                        # Check if source files exist and are readable
-                        find src/ include/ tests/ -name "*.cpp" -o -name "*.h" | head -10
-                        
-                        # Basic code metrics
-                        echo "Line count in source files:"
-                        find src/ include/ tests/ -name "*.cpp" -o -name "*.h" | xargs wc -l
-                    '''
                 }
             }
             
@@ -103,8 +90,7 @@
                 steps {
                     echo 'Deploying application using Ansible...'
                     sh '''
-                        # Run Ansible playbook for deployment
-                        ansible-playbook -i ansible/inventory ansible/deploy.yml --extra-vars "docker_image=${DOCKER_IMAGE_NAME}:${DOCKER_TAG}"
+                        ansible-playbook -i ansible/inventory ansible/deploy.yml
                     '''
                 }
             }
@@ -120,29 +106,8 @@
             success {
                 echo 'Pipeline executed successfully!'
                 emailext (
-                    subject: "SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                    body: """
-                    <h2>🎉 Build Successful!</h2>
-                    <p><strong>Project:</strong> ${env.JOB_NAME}</p>
-                    <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                    <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                    <p><strong>Git Commit:</strong> ${env.GIT_COMMIT}</p>
-                    <p><strong>Duration:</strong> ${currentBuild.durationString}</p>
-                    
-                    <h3>All Stages Completed:</h3>
-                    <ul>
-                        <li>Code Checkout</li>
-                        <li> Application Build</li>
-                        <li> Test harness </li>
-                        <li> Code Quality Check</li>
-                        <li> Docker Image Build</li>
-                        <li> Docker Hub Push</li>
-                        <li> Ansible Deployment</li>
-                    </ul>
-                    
-                    <p><strong>Docker Image:</strong> ${DOCKER_IMAGE_NAME}:${DOCKER_TAG}</p>
-                    <p>🚀 Application deployed successfully!</p>
-                    """,
+                    subject: "✅ SUCCESS: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
+                    body: getEmailTemplate('success'),
                     mimeType: 'text/html',
                     to: "${env.NOTIFICATION_EMAIL}"
                 )
@@ -151,25 +116,7 @@
                 echo 'Pipeline failed!'
                 emailext (
                     subject: "❌ FAILED: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                    body: """
-                    <h2>💥 Build Failed!</h2>
-                    <p><strong>Project:</strong> ${env.JOB_NAME}</p>
-                    <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                    <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                    <p><strong>Console Output:</strong> <a href="${env.BUILD_URL}/console">${env.BUILD_URL}/console</a></p>
-                    <p><strong>Git Commit:</strong> ${env.GIT_COMMIT}</p>
-                    <p><strong>Duration:</strong> ${currentBuild.durationString}</p>
-                    
-                    <h3>❌ Failed Stage:</h3>
-                    <p><strong>Stage:</strong> ${env.STAGE_NAME}</p>
-                    
-                    <h3>🔍 Failure Details:</h3>
-                    <pre style="background-color: #f5f5f5; padding: 10px; border-radius: 5px;">
-                    ${currentBuild.description ?: 'Check console output for detailed error information'}
-                    </pre>
-                    
-                    <p>⚠️ Please check the console output and fix the issues.</p>
-                    """,
+                    body: getEmailTemplate('failure'),
                     mimeType: 'text/html',
                     to: "${env.NOTIFICATION_EMAIL}"
                 )
@@ -178,23 +125,14 @@
                 echo 'Pipeline unstable!'
                 emailext (
                     subject: "⚠️ UNSTABLE: ${env.JOB_NAME} - Build #${env.BUILD_NUMBER}",
-                    body: """
-                    <h2>⚠️ Build Unstable!</h2>
-                    <p><strong>Project:</strong> ${env.JOB_NAME}</p>
-                    <p><strong>Build Number:</strong> ${env.BUILD_NUMBER}</p>
-                    <p><strong>Build URL:</strong> <a href="${env.BUILD_URL}">${env.BUILD_URL}</a></p>
-                    <p><strong>Test Results:</strong> <a href="${env.BUILD_URL}/testReport">${env.BUILD_URL}/testReport</a></p>
-                    
-                    <p>🧪 Some tests may have failed or warnings were generated.</p>
-                    <p>Please review the test results and console output.</p>
-                    """,
+                    body: getEmailTemplate('unstable'),
                     mimeType: 'text/html',
                     to: "${env.NOTIFICATION_EMAIL}"
                 )
             }
             cleanup {
                 // Clean workspace
-                cleanWs()
+                cleanWs() 
             }
         }
     }

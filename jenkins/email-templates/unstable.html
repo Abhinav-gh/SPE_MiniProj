@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .warning {
+            color: #ffc107;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 class="warning">⚠️ Build Unstable!</h2>
+
+    <p><strong>Project:</strong> ${JOB_NAME}</p>
+    <p><strong>Build:</strong> #${BUILD_NUMBER}</p>
+    <p><strong>Status:</strong> ⚠️ UNSTABLE</p>
+
+    <p>🧪 Some tests may have failed or warnings were generated.</p>
+
+    <p><a href="${BUILD_URL}">View Build Details</a></p>
+    <p><a href="${BUILD_URL}/testReport">View Test Results</a></p>
+</body>
+
+</html>
