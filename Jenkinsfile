@@ -15,17 +15,6 @@
                 }
             }
             
-            // stage('Build Dependencies') {
-            //     steps {
-            //         echo 'Installing build dependencies...'
-            //         sh '''
-            //             # Update and install required packages
-            //             sudo apt-get update
-            //             sudo apt-get install -y cmake build-essential
-            //         '''
-            //     }
-            // }
-            
             stage('Build Application') {
                 steps {
                     echo 'Building the scientific calculator application...'
@@ -96,16 +85,6 @@
                 }
             }
             
-            // stage('Test Docker Image') {
-            //     steps {
-            //         echo 'Testing Docker image...'
-            //         sh '''
-            //             # Run container to test it works
-            //             docker run --rm ${DOCKER_IMAGE_NAME}:${DOCKER_TAG} ./calculator_test_harness
-            //         '''
-            //     }
-            // }
-            
             stage('Push to Docker Hub') {
                 steps {
                     echo 'Pushing Docker image to Docker Hub...'
@@ -119,28 +98,28 @@
                 }
             }
             
-            // stage('Deploy with Ansible') {
-            //     steps {
-            //         echo 'Deploying application using Ansible...'
-            //         sh '''
-            //             # Run Ansible playbook for deployment
-            //             ansible-playbook -i ansible/inventory ansible/deploy.yml --extra-vars "docker_image=${DOCKER_IMAGE_NAME}:${DOCKER_TAG}"
-            //         '''
-            //     }
-            // }
+            stage('Deploy with Ansible') {
+                steps {
+                    echo 'Deploying application using Ansible...'
+                    sh '''
+                        # Run Ansible playbook for deployment
+                        ansible-playbook -i ansible/inventory ansible/deploy.yml --extra-vars "docker_image=${DOCKER_IMAGE_NAME}:${DOCKER_TAG}"
+                    '''
+                }
+            }
             
-            // stage('Cleanup') {
-            //     steps {
-            //         echo 'Cleaning up...'
-            //         sh '''
-            //             # Clean up local Docker images to save space
-            //             // docker image prune -f
+            stage('Cleanup') {
+                steps {
+                    echo 'Cleaning up...'
+                    sh '''
+                        # Clean up local Docker images to save space
+                        // docker image prune -f
                         
-            //             # Remove build artifacts if needed
-            //             # rm -rf build/
-            //         '''
-            //     }
-            // }
+                        # Remove build artifacts if needed
+                        # rm -rf build/
+                    '''
+                }
+            }
         }
         
         post {
