@@ -5,6 +5,7 @@
             DOCKER_HUB_CREDENTIALS = credentials('Abhinav_Docker')
             DOCKER_IMAGE_NAME = 'darklordrises/spe_miniproj'
             DOCKER_TAG = "${BUILD_NUMBER}"
+            NOTIFICATION_EMAIL = 'work.abhinav.work@gmail.com'
         }
         
         stages {
@@ -143,7 +144,7 @@
                     <p>🚀 Application deployed successfully!</p>
                     """,
                     mimeType: 'text/html',
-                    to: "your-actual-email@gmail.com"
+                    to: "${env.NOTIFICATION_EMAIL}"
                 )
             }
             failure {
@@ -170,7 +171,7 @@
                     <p>⚠️ Please check the console output and fix the issues.</p>
                     """,
                     mimeType: 'text/html',
-                    to: "your-actual-email@gmail.com"
+                    to: "${env.NOTIFICATION_EMAIL}"
                 )
             }
             unstable {
@@ -188,7 +189,7 @@
                     <p>Please review the test results and console output.</p>
                     """,
                     mimeType: 'text/html',
-                    to: "your-actual-email@gmail.com"
+                    to: "${env.NOTIFICATION_EMAIL}"
                 )
             }
             cleanup {

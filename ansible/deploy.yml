@@ -1,6 +1,7 @@
 ---
 - name: Calculator App deployment
-  hosts: local
+  hosts: localhost
+  connection: local
   vars:
     img_name: "darklordrises/spe_miniproj"
     img_tag: "latest"
