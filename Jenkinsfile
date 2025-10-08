@@ -108,18 +108,6 @@
                 }
             }
             
-            stage('Cleanup') {
-                steps {
-                    echo 'Cleaning up...'
-                    sh '''
-                        # Clean up local Docker images to save space
-                        // docker image prune -f
-                        
-                        # Remove build artifacts if needed
-                        # rm -rf build/
-                    '''
-                }
-            }
         }
         
         post {
