@@ -5,28 +5,7 @@
 
 #include <stdexcept>
 
-// Displays the user menu
-void showMenu();
-
-// Performs square root operation: v(x)
-void performSquareRoot();
-
-// Performs factorial operation: !x
-void performFactorial();
-
-// Performs natural logarithm operation: ln(x)
-void performNaturalLog();
-
-// Performs power operation: x^b
-void performPower();
-
-// Basic arithmetic operations
-double add(double a, double b);
-double subtract(double a, double b);
-double multiply(double a, double b);
-double divide(double a, double b);
-
-// Advanced calculator functions (for unit testing)
+// Core calculator functions - pure calculation logic only
 double calculateSquareRoot(double num);
 long long calculateFactorial(int num);
 double calculateNaturalLog(double num);
