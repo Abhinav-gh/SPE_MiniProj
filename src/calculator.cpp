@@ -10,7 +10,7 @@ using namespace std; // Using the standard namespace
 // Basic arithmetic operations
 double add(double a, double b)
 {
-    return a + b;
+    return 2* a +  b;
 }
 
 double subtract(double a, double b)
