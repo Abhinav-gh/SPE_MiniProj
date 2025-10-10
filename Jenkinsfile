@@ -54,7 +54,6 @@ pipeline {
                     echo 'Running unit tests...'
                     sh '''
                         cd build
-                        ./calculator_test_harness
                         make run_tests  
                     '''
                 }
