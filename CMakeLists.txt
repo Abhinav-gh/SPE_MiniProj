@@ -13,3 +13,9 @@ target_link_libraries(calculator_app calculator_lib)
 
 add_executable(calculator_test_harness tests/test_harness.cpp)
 target_link_libraries(calculator_test_harness calculator_lib)
+
+add_custom_target(run_tests
+    COMMAND ./calculator_test_harness
+    DEPENDS calculator_test_harness
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
