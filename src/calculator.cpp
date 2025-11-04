@@ -55,6 +55,6 @@ double calculatePower(double base, double exponent)
     {
         throw overflow_error("Power operation resulted in overflow or invalid result");
     }
-    // return result;
-    return 1;
+    return result;
+    // return 1;
 }
